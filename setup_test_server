@@ -3,6 +3,6 @@
 MINECRAFT_VERSION=1.16.5
 
 mkdir -p test_server/{$MINECRAFT_VERSION,build_tools}
-cd test_server/build_tools
+cd test_server/build_tools || exit 1
 
 java -jar ../../BuildTools.jar --skip-compile --compile-if-changed --rev "$MINECRAFT_VERSION" --output-dir "../$MINECRAFT_VERSION"
