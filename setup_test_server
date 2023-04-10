@@ -6,4 +6,3 @@ mkdir -p test_server/{$MINECRAFT_VERSION,build_tools}
 cd test_server/build_tools
 
 java -jar ../../BuildTools.jar --skip-compile --compile-if-changed --rev "$MINECRAFT_VERSION" --output-dir "../$MINECRAFT_VERSION"
-sed -i "s/eula=.*/eula=true/g" "../$MINECRAFT_VERSION/eula.txt"
