@@ -1,0 +1,4 @@
+name: not_holo_lib
+version: '${project.version}'
+main: fr.not_here.not_holo_lib.NotHoloLib
+api-version: 1.16
