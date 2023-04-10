@@ -14,7 +14,7 @@
         <compilerArguments>
           <stringArguments>
             <stringArg name="jvmTarget" arg="1.8" />
-            <stringArg name="apiVersion" arg="1.8" />
+            <stringArg name="apiVersion" arg="1.7" />
             <stringArg name="languageVersion" arg="1.8" />
           </stringArguments>
           <arrayArguments>
@@ -24,12 +24,5 @@
         </compilerArguments>
       </configuration>
     </facet>
-  </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src/main/kotlin" isTestSource="false" />
-    </content>
-    <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
