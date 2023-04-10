@@ -1,4 +1,25 @@
-name: not_holo_lib
+name: NotHoloLib
 version: '${project.version}'
 main: fr.not_here.not_holo_lib.NotHoloLib
 api-version: 1.16
+
+commands:
+  spawnholo:
+    description: Spawn a hologram
+    usage: /spawnholo <...textOrItem>
+    permission: not_holo_lib.spawnholo
+    permission-message: You don't have the permission to use this command
+    aliases: [sh]
+  editholo:
+    description: Edit a hologram
+    usage: /editholo <line> <textOrItem>
+    permission: not_holo_lib.editholo
+    permission-message: You don't have the permission to use this command
+    aliases: [eh]
+  removeholo:
+    description: Remove a hologram
+    usage: /removeholo
+    permission: not_holo_lib.removeholo
+    permission-message: You don't have the permission to use this command
+    aliases: [rh]
+

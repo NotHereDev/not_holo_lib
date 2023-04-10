@@ -3,8 +3,8 @@
   <component name="AutoImportedSourceRoots">
     <option name="directories">
       <list>
-        <option value="$MODULE_DIR$/src/main/java" />
-        <option value="$MODULE_DIR$/src/main/kotlin" />
+        <option value="D:\projets perso\not_holo_lib/src/main/java" />
+        <option value="D:\projets perso\not_holo_lib/src/main/kotlin" />
       </list>
     </option>
   </component>
@@ -22,7 +22,7 @@
         <compilerArguments>
           <stringArguments>
             <stringArg name="jvmTarget" arg="1.8" />
-            <stringArg name="apiVersion" arg="1.8" />
+            <stringArg name="apiVersion" arg="1.7" />
             <stringArg name="languageVersion" arg="1.8" />
           </stringArguments>
           <arrayArguments>
