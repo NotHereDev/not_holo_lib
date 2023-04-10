@@ -1,8 +1,8 @@
 #!/bin/bash
 
-curl -z BuildTools.jar -o BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+MINECRAFT_VERSION=${1:-1.16.5}
 
-MINECRAFT_VERSION=1.16.5
+curl -z BuildTools.jar -o BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 
 mkdir -p test_server/{$MINECRAFT_VERSION,build_tools}
 cd test_server/build_tools || exit 1
