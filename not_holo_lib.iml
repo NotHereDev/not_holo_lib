@@ -29,15 +29,6 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/kotlin" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test_server/build_tools/Bukkit/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test_server/build_tools/Bukkit/src/test/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test_server/build_tools/CraftBukkit/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test_server/build_tools/CraftBukkit/src/test/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test_server/build_tools/work/decompile-d7866d9c" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test_server/build_tools/work/nms.old.1681147181494" isTestSource="false" packagePrefix="net" />
-      <sourceFolder url="file://$MODULE_DIR$/test_server/build_tools/work/nms.old.1681147249904" isTestSource="false" packagePrefix="net" />
-      <sourceFolder url="file://$MODULE_DIR$/test_server/build_tools/work/nms.old.1681147280747" isTestSource="false" packagePrefix="net" />
-      <sourceFolder url="file://$MODULE_DIR$/test_server/build_tools/work/nms.old.1681147512150" isTestSource="false" packagePrefix="net" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
