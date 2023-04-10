@@ -9,8 +9,5 @@
         <module name="not_holo_lib" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="not_holo_lib" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
