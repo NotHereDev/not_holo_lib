@@ -1,7 +1,7 @@
 if(!(Test-Path "./BuildTools.jar")) {
     Invoke-WebRequest -OutFile BuildTools.jar -Uri https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 }
-$MINECRAFT_VERSION="1.16.5"
+$MINECRAFT_VERSION= if ($args[0]) { $args[0] } else { "1.16.5" }
 [System.IO.Directory]::CreateDirectory($PSScriptRoot + "/test_server/$MINECRAFT_VERSION")
 [System.IO.Directory]::CreateDirectory($PSScriptRoot + "/test_server/build_tools")
 Set-Location ./test_server/build_tools
