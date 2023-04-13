@@ -9,7 +9,11 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class SpawnHolo : CommandExecutor{
+class SpawnHolo(
+    override val autoCompletion: Array<NotHoloCommand.(CommandSender) -> MutableList<String>?> = arrayOf(
+        { _ -> mutableListOf("textOrMaterialName") }
+    )
+) : NotHoloCommand() {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val location = if(sender is Player){
             sender.location
@@ -21,9 +25,9 @@ class SpawnHolo : CommandExecutor{
 
         for(arg in args){
             if(Material.values().map { it.name }.contains(arg)){
-                holo.addItem(null, Material.valueOf(arg))
+                holo.addItem(Material.valueOf(arg))
             }else{
-                holo.addLine(null, arg)
+                holo.addLine(arg)
             }
         }
 

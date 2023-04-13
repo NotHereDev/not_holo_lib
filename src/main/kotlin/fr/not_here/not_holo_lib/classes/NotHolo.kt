@@ -5,119 +5,156 @@ import fr.not_here.not_holo_lib.extension.*
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.Item
+import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 
-
-
-
-private const val ARMOR_STAND_HEIGHT = 0.0;
 class NotHolo(
     var loc: Location,
     var spacing: Double = 0.3,
-    private val mainArmorStand: ArmorStand = (loc.chunk.world.spawnEntity(loc, EntityType.ARMOR_STAND) as ArmorStand).apply { toUnnamedHolo(); },
+    private val _mainArmorStand: ArmorStand = loc.spawnArmorStand.toHolo,
     private val lineArmorStands: MutableMap<Vector, ArmorStand> = mutableMapOf(),
-    private val itemsArmorStands: MutableMap<Vector, ArmorStand> = mutableMapOf(),
+    private val itemArmorStands: MutableMap<Vector, ArmorStand> = mutableMapOf(),
 ) {
+    private val defaultLineOffset: Vector
+        get() = Vector(0.0, spacing * lineArmorStands.size, 0.0)
+    private val defaultItemOffset: Vector
+        get() = Vector(0.0, spacing * itemArmorStands.size, 0.0)
 
-    fun addLine(offset: Vector?, line: String){
-        loc = mainArmorStand.location
-        loc.add(offset ?: Vector(0.0, spacing * lineArmorStands.size, 0.0))
-        val e = loc.chunk.world.spawnEntity(
-            //we want to remobe armor stand height from the location
-            loc.apply { subtract(0.0, ARMOR_STAND_HEIGHT, 0.0) },
-            EntityType.ARMOR_STAND
-        ) as ArmorStand;
-        e.toHolo()
-        e.customName = line
-        e.mainArmorStand = mainArmorStand
-        mainArmorStand.relatedArmorStands += e
-        lineArmorStands[offset ?: Vector(0.0, spacing * lineArmorStands.size, 0.0)] = e
+    val lines: List<String>
+        get() = lineArmorStands.values.mapNotNull { it.customName }
+
+    val items: List<Material>
+        get() = itemArmorStands.values.mapNotNull { (it.passengers.getOrNull(0) as Item?)?.itemStack?.type }
+
+    val lineCount: Int
+        get() = lineArmorStands.size
+
+    val itemCount: Int
+        get() = itemArmorStands.size
+
+    fun addLine(line: String, offset: Vector = defaultLineOffset): NotHolo {
+        loc = _mainArmorStand.location.add(offset)
+        val e = loc.spawnArmorStand.toLineHolo.apply {
+            customName = line
+            isCustomNameVisible = line.isNotEmpty()
+            mainArmorStand = _mainArmorStand
+        }
+        _mainArmorStand.relatedArmorStands += e
+        lineArmorStands[offset] = e
+        return this
     }
 
-    fun editLine(index: Int, offset: Vector?, line: String){
-        if(lineArmorStands.size <= index) return
-        loc = mainArmorStand.location
+    fun editLine(index: Int, line: String, offset: Vector? = null): NotHolo {
+        if (lineArmorStands.size <= index){
+            for (i in lineArmorStands.size until index) addLine("")
+            return addLine(line, offset ?: defaultLineOffset)
+        }
         val e = lineArmorStands.entries.elementAt(index)
-        loc.add(offset ?: e.key)
-        NotHoloLib.instance.logger.info("parent: ${e.value.mainArmorStand}")
-        e.value.teleport(loc.apply { subtract(0.0, ARMOR_STAND_HEIGHT, 0.0) })
-        e.value.customName = line
-        NotHoloLib.instance.logger.info("parent: ${e.value.mainArmorStand}")
-        if(offset != null) {
+        e.value.apply {
+            customName = line
+            isCustomNameVisible = line.isNotEmpty()
+            teleport(_mainArmorStand.location.add(offset ?: e.key).alignForTag)
+        }
+        if (offset != null) {
             lineArmorStands.remove(e.key)
             lineArmorStands[offset] = e.value
         }
+        return this
     }
 
-    fun removeLine(index: Int){
-        if(itemsArmorStands.size <= index) return
-        val e = lineArmorStands.entries.elementAt(index)
-        e.value.remove()
-        mainArmorStand.relatedArmorStands -= e.value
-        lineArmorStands.remove(e.key)
-    }
-
-    fun addItem(offset: Vector?, material: Material){
-        loc = mainArmorStand.location
-        loc.add(offset ?: Vector(0.0, spacing * itemsArmorStands.size, 0.0))
-        val e = loc.chunk.world.spawnEntity(
-            //we want to remobe armor stand height from the location
-            loc.apply { subtract(0.0, ARMOR_STAND_HEIGHT, 0.0) },
-            EntityType.ARMOR_STAND
-        ) as ArmorStand;
-        e.toUnnamedHolo()
-        val item = loc.chunk.world.dropItem(loc, org.bukkit.inventory.ItemStack(material))
-        item.isPersistent = true
-        item.isPickable = false
-        item.teleport(loc)
-        e.addPassenger(item)
-        e.mainArmorStand = mainArmorStand
-        mainArmorStand.relatedArmorStands += e
-        itemsArmorStands[offset ?: Vector(0.0, spacing * itemsArmorStands.size, 0.0)] = e
-    }
-
-    fun editItem(index: Int, offset: Vector?, material: Material){
-        if(itemsArmorStands.size <= index) return
-        loc = mainArmorStand.location
-        val e = itemsArmorStands.entries.elementAt(index)
-        loc.add(offset ?: e.key)
-        e.value.teleport(loc.apply { subtract(0.0, ARMOR_STAND_HEIGHT, 0.0) })
-        val item = e.value.passengers[0] as Item
-        item.itemStack = org.bukkit.inventory.ItemStack(material)
-        if (offset != null) {
-            itemsArmorStands.remove(e.key)
-            itemsArmorStands[offset] = e.value
+    fun removeLine(index: Int): NotHolo {
+        if (lineArmorStands.size <= index) return this
+        if(lineArmorStands.size == index + 1) {
+            lineArmorStands.remove(lineArmorStands.keys.elementAt(index))?.apply { remove(); }
+            if(lineArmorStands.isEmpty() && itemArmorStands.isEmpty()) _mainArmorStand.remove()
+        } else {
+            editLine(index, "")
         }
+        removeLastEmptyLines()
+        return this
     }
 
-    fun removeItem(index: Int){
-        if(itemsArmorStands.size <= index) return
-        val e = itemsArmorStands.entries.elementAt(index)
-        e.value.remove()
-        mainArmorStand.relatedArmorStands -= e.value
-        itemsArmorStands.remove(e.key)
+    private fun removeLastEmptyLines(): NotHolo {
+        for (i in lineArmorStands.size - 1 downTo 0) {
+            if (!lineArmorStands.values.elementAt(i).customName.isNullOrEmpty()) break
+            lineArmorStands.remove(lineArmorStands.keys.elementAt(i))?.apply { remove(); }
+        }
+        return this
     }
 
-    fun remove(){
-        mainArmorStand.remove()
-        lineArmorStands.values.forEach { it.remove() }
-        itemsArmorStands.values.forEach { it.passengers.forEach{ it2 -> it2.remove() }; it.remove() }
+    fun addItem(material: Material, offset: Vector = defaultItemOffset): NotHolo {
+        NotHoloLib.instance.logger.info("length: ${itemArmorStands.size}, offset: $offset, material: $material, map: $itemArmorStands, related: ${_mainArmorStand.relatedArmorStands} ")
+        loc = _mainArmorStand.location.add(offset)
+        val i = loc.spawnItem(material)?.toHolo
+        val e = loc.spawnArmorStand.toItemHolo.apply{
+            if(i != null) addPassenger(i)
+            mainArmorStand = _mainArmorStand
+        }
+        _mainArmorStand.relatedArmorStands += e
+        itemArmorStands[offset] = e
+        return this
     }
 
-    companion object{
-        fun fromArmorStand(armorStand: ArmorStand): NotHolo? {
-            var armorStands = listOf<ArmorStand>()
-            armorStand.mainArmorStand?.also {
-                armorStands = it.relatedArmorStands
+    fun editItem(index: Int, material: Material, offset: Vector? = null): NotHolo {
+        NotHoloLib.instance.logger.info("length: ${itemArmorStands.size}, index: $index")
+        if (itemArmorStands.size <= index) {
+            for (i in itemArmorStands.size until index) addItem(Material.AIR)
+            return addItem(material, offset ?: defaultItemOffset)
+        }
+        val e = itemArmorStands.entries.elementAt(index)
+        e.value.apply{
+            teleport(_mainArmorStand.location.add(offset ?: e.key).alignForTag)
+            (passengers.getOrNull(0) as Item?).let {
+                if (it != null && it.itemStack.type != material && material != Material.AIR) it.itemStack = ItemStack(material)
+                else if (it == null && material != Material.AIR) addPassenger(loc.spawnItem(material)?.toHolo!!)
+                else if (it != null && material == Material.AIR) it.remove()
             }
-            if(armorStands.isEmpty()) armorStands = armorStand.relatedArmorStands
-            if(armorStands.isEmpty()) return null
+        }
+        if (offset != null) {
+            itemArmorStands.remove(e.key)
+            itemArmorStands[offset] = e.value
+        }
+        return this
+    }
+
+    fun removeItem(index: Int): NotHolo {
+        if (itemArmorStands.size <= index) return this
+        if(itemArmorStands.size == index + 1) {
+            itemArmorStands.remove(itemArmorStands.keys.elementAt(index))?.apply { passengers.forEach { it2 -> it2.remove() }; remove(); }
+            if(lineArmorStands.isEmpty() && itemArmorStands.isEmpty()) _mainArmorStand.remove()
+        } else {
+            editItem(index, Material.AIR)
+        }
+        removeLastEmptyItems()
+        return this
+    }
+    private fun removeLastEmptyItems(): NotHolo {
+        for (i in itemArmorStands.size - 1 downTo 0) {
+            val passenger = itemArmorStands.values.elementAt(i).passengers.getOrNull(0) as Item?
+            if (passenger != null && passenger.itemStack.type != Material.AIR) break
+            itemArmorStands.remove(itemArmorStands.keys.elementAt(i))?.apply { passengers.forEach { it2 -> it2.remove() }; remove(); }
+        }
+        return this
+    }
+
+    fun remove() {
+        _mainArmorStand.remove()
+        lineArmorStands.values.forEach { it.remove() }
+        itemArmorStands.values.forEach { it.apply { passengers.forEach { it2 -> it2.remove() } }.remove() }
+    }
+
+    companion object {
+        fun fromArmorStand(armorStand: ArmorStand): NotHolo? {
+            val armorStands = armorStand.run { mainArmorStand?.relatedArmorStands ?: relatedArmorStands }
+            if (armorStands.isEmpty()) return null
             val mainArmorStand = armorStands.first().mainArmorStand ?: return null
-            val lineArmorStands = mutableMapOf<Vector, ArmorStand>().apply { putAll(armorStands.filter { it.passengers.isEmpty() }.map { it.location.toVector().subtract(mainArmorStand.location.toVector()) to it }) }
-            val itemsArmorStands = mutableMapOf<Vector, ArmorStand>().apply { putAll(armorStands.filter { it.passengers.isNotEmpty() }.map { it.location.toVector().subtract(mainArmorStand.location.toVector()) to it }) }
-            return NotHolo(mainArmorStand.location, mainArmorStand = mainArmorStand, lineArmorStands = lineArmorStands, itemsArmorStands = itemsArmorStands)
+            return NotHolo(
+                mainArmorStand.location,
+                _mainArmorStand = mainArmorStand,
+                lineArmorStands = armorStands.lineHolos.toCacheMap(mainArmorStand.location),
+                itemArmorStands = armorStands.itemHolos.toCacheMap(mainArmorStand.location)
+            )
         }
     }
 }

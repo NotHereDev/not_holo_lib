@@ -2,30 +2,52 @@
 package fr.not_here.not_holo_lib.extension
 
 import fr.not_here.not_holo_lib.NotHoloLib
+import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.ArmorStand
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.util.Vector
 import java.util.*
 
 
-fun ArmorStand.toHolo() {
-    this.isCustomNameVisible = true
-    this.isInvulnerable = true
-    this.isSilent = true
-    this.setGravity(false)
-    this.isMarker = true
-    this.isVisible = false
-    this.isCollidable = false
-}
-fun ArmorStand.toUnnamedHolo() {
-    this.isCustomNameVisible = false
-    this.isInvulnerable = true
-    this.isSilent = true
-    this.setGravity(false)
-    this.isMarker = true
-    this.isVisible = false
-    this.isCollidable = false
-}
+val ArmorStand.toHolo : ArmorStand
+    get() {
+        return this.apply{
+            isInvulnerable = true
+            isSilent = true
+            setGravity(false)
+            isMarker = true
+            isVisible = false
+            isCollidable = false
+        }
+    }
+val ArmorStand.toLineHolo : ArmorStand
+    get() {
+        return this.apply{
+            toHolo
+            persistentDataContainer.set(NamespacedKey(NotHoloLib.instance, "is_item_holo"), PersistentDataType.SHORT, 0.toShort())
+        }
+    }
+val ArmorStand.toItemHolo : ArmorStand
+    get() {
+        return this.apply{
+            toHolo
+            persistentDataContainer.set(NamespacedKey(NotHoloLib.instance, "is_item_holo"), PersistentDataType.SHORT, 1.toShort())
+        }
+    }
+
+
+val ArmorStand.isItemHolo : Boolean
+    get() {
+        return this.persistentDataContainer.get(NamespacedKey(NotHoloLib.instance, "is_item_holo"), PersistentDataType.SHORT) == 1.toShort()
+    }
+
+val List<ArmorStand>.lineHolos : List<ArmorStand>
+    get() = this.filter { !it.isItemHolo }
+val List<ArmorStand>.itemHolos : List<ArmorStand>
+    get() = this.filter { it.isItemHolo }
+fun List<ArmorStand>.toCacheMap(mainArmorStandLoc: Location) : MutableMap<Vector, ArmorStand>
+    = this.associateBy { it.location.subtract(mainArmorStandLoc).toVector() }.toMutableMap()
 
 var ArmorStand.relatedArmorStands: List<ArmorStand>
     get() {
