@@ -87,7 +87,7 @@ class NotHolo(
         NotHoloLib.instance.logger.info("length: ${itemArmorStands.size}, offset: $offset, material: $material, map: $itemArmorStands, related: ${_mainArmorStand.relatedArmorStands} ")
         loc = _mainArmorStand.location.add(offset)
         val i = loc.spawnItem(material)?.toHolo
-        val e = loc.spawnArmorStand.toItemHolo.apply{
+        val e = loc.spawnItemArmorStand.toItemHolo.apply{
             if(i != null) addPassenger(i)
             mainArmorStand = _mainArmorStand
         }
@@ -104,7 +104,7 @@ class NotHolo(
         }
         val e = itemArmorStands.entries.elementAt(index)
         e.value.apply{
-            teleport(_mainArmorStand.location.add(offset ?: e.key).alignForTag)
+            teleport(_mainArmorStand.location.add(offset ?: e.key).alignForItemPassenger)
             (passengers.getOrNull(0) as Item?).let {
                 if (it != null && it.itemStack.type != material && material != Material.AIR) it.itemStack = ItemStack(material)
                 else if (it == null && material != Material.AIR) addPassenger(loc.spawnItem(material)?.toHolo!!)

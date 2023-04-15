@@ -11,6 +11,7 @@ class NotHoloLib : JavaPlugin() {
 
     override fun onEnable() {
         instance = this
+        @Suppress("SpellCheckingInspection")
         mapOf(
             "spawnholo" to SpawnHolo(),
             "editholo" to EditHolo(),

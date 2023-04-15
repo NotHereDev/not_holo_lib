@@ -16,12 +16,18 @@ val Location.alignForTag: Location
     get() = this.subtract(0.0, ARMOR_STAND_TAG_OFFSET, 0.0)
 
 private const val ARMOR_STAND_PASSENGER_OFFSET = 0.0
-val Location.alignForPassenger: Location
+val Location.alignForItemPassenger: Location
     get() = this.subtract(0.0, ARMOR_STAND_PASSENGER_OFFSET, 0.0)
 
 val Location.spawnArmorStand: ArmorStand
     get() = this.chunk.world.spawnEntity(
         this.alignForTag,
+        EntityType.ARMOR_STAND
+    ) as ArmorStand
+
+val Location.spawnItemArmorStand: ArmorStand
+    get() = this.chunk.world.spawnEntity(
+        this.alignForItemPassenger,
         EntityType.ARMOR_STAND
     ) as ArmorStand
 

@@ -4,7 +4,6 @@ import fr.not_here.not_holo_lib.classes.NotHolo
 import fr.not_here.not_holo_lib.extension.SLocation
 import org.bukkit.Material
 import org.bukkit.command.Command
-import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 

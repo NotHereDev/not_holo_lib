@@ -1,7 +1,6 @@
 package fr.not_here.not_holo_lib.commands.classes
 
 import fr.not_here.not_holo_lib.NotHoloLib
-import fr.not_here.not_holo_lib.classes.NotHolo
 import fr.not_here.not_holo_lib.commands.NotHoloCommand
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender

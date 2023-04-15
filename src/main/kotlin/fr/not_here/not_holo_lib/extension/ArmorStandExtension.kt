@@ -1,4 +1,5 @@
 @file:JvmName("ArmorStandExtension")
+
 package fr.not_here.not_holo_lib.extension
 
 import fr.not_here.not_holo_lib.NotHoloLib
@@ -54,7 +55,7 @@ var ArmorStand.relatedArmorStands: List<ArmorStand>
         val list = mutableListOf<ArmorStand>()
         val relatedArmorStandUUIDSStr = this.persistentDataContainer.get(NamespacedKey(NotHoloLib.instance, "related_armor_stands"), PersistentDataType.STRING)
             ?: return mutableListOf()
-        val relatedArmorStandUUIDS = relatedArmorStandUUIDSStr.split("|");
+        val relatedArmorStandUUIDS = relatedArmorStandUUIDSStr.split("|")
         for (it in relatedArmorStandUUIDS) {
             val uuid: UUID
             try {
