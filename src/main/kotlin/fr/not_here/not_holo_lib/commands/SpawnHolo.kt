@@ -26,6 +26,4 @@ class SpawnHolo(
 
         return true
     }
-
-
 }
