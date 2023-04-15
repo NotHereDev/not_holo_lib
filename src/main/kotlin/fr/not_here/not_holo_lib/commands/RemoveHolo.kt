@@ -11,20 +11,8 @@ class RemoveHolo(
     )
 ) : NotHoloCommand() {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if(sender !is Player){
-            sender.sendMessage("§cYou must be a player to use this command")
-            return true
-        }
-
-        val notHolo = sender.lookingNotHolo
-
-        if(notHolo == null){
-            sender.sendMessage("§cYou must look at a holo")
-            return true
-        }
-
-        notHolo.remove()
-
+        val player = requirePlayer(sender) ?: return false
+        val notHolo = player.lookingNotHolo?.remove() ?: return player.respondError("You must look at a holo")
         return true
     }
 }

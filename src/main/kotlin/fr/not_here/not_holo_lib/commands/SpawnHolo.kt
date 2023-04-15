@@ -1,8 +1,7 @@
 package fr.not_here.not_holo_lib.commands
 
 import fr.not_here.not_holo_lib.classes.NotHolo
-import org.bukkit.Bukkit
-import org.bukkit.Location
+import fr.not_here.not_holo_lib.extension.SLocation
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -15,12 +14,7 @@ class SpawnHolo(
     )
 ) : NotHoloCommand() {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val location = if(sender is Player){
-            sender.location
-        }else{
-            Location(Bukkit.getWorld("world"), 0.0, 0.0, 0.0)
-        }
-
+        val location = if(sender is Player) sender.location else SLocation.zero
         val holo = NotHolo(location)
 
         for(arg in args){

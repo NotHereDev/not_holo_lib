@@ -1,6 +1,7 @@
 @file:JvmName("LocationExtension")
 package fr.not_here.not_holo_lib.extension
 
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
@@ -27,5 +28,20 @@ val Location.spawnArmorStand: ArmorStand
 fun Location.spawnItem(material: Material): Item? {
     if(material == Material.AIR) return null
     return this.chunk.world.dropItem(this.alignForTag, ItemStack(material))
+}
+
+object SLocation{
+    fun from(x: Double, y: Double, z: Double, world: String? = null): Location {
+        return Location(
+            if (world == null) Bukkit.getWorld("world") else Bukkit.getWorld(world), x, y, z
+        )
+    }
+
+    val zero: Location
+        get() = from(0.0, 0.0, 0.0)
+
+    fun zero(world: String? = null): Location {
+        return from(0.0, 0.0, 0.0, world)
+    }
 }
 

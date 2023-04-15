@@ -23,4 +23,17 @@ abstract class NotHoloCommand : CommandExecutor {
         }, 1, java.util.concurrent.TimeUnit.SECONDS)
         return cachedHoloForSender[sender.uniqueId]
     }
+
+    fun requirePlayer(sender: CommandSender): Player? {
+        if (sender !is Player) {
+            sender.sendMessage("§cYou must be a player to use this command")
+            return null
+        }
+        return sender
+    }
+
+    fun CommandSender.respondError(message: String): Boolean {
+        sendMessage("§c$message")
+        return false
+    }
 }
